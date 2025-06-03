@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import './App.css'; // Ensure you have a CSS file for global styles
 
 import {
   Mail, Phone, MapPin, Linkedin, Github, Twitter, Download, Share2,
   ExternalLink, User, MessageCircle, Calendar, Award, TrendingUp, Star,
-  ChevronRight, Heart, Camera, QrCode, Plus, Check,
+  ChevronRight, Heart, Camera, QrCode, Check,
   Instagram, Facebook, Globe
 } from 'lucide-react';
 
@@ -12,9 +11,6 @@ export default function OptimizedBusinessCard() {
   const [currentScreen, setCurrentScreen] = useState('profile');
   const [isSharing, setIsSharing] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
-  const [showSaveFloat, setShowSaveFloat] = useState(true);
-  const [contactSaved, setContactSaved] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
 
   const screens = {
@@ -108,12 +104,7 @@ export default function OptimizedBusinessCard() {
 
   const handleScreenChange = (newScreen) => {
     if (newScreen === currentScreen) return;
-
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentScreen(newScreen);
-      setIsTransitioning(false);
-    }, 150);
+    setCurrentScreen(newScreen);
   };
 
   const handleShare = async () => {
@@ -157,14 +148,6 @@ END:VCARD`;
     window.URL.revokeObjectURL(url);
   };
 
-  const handleSaveContact = () => {
-    setContactSaved(true);
-    handleDownload();
-    setTimeout(() => {
-      setShowSaveFloat(false);
-    }, 2000);
-  };
-
   const handleProjectClick = (project) => {
     window.open(project.url, '_blank');
   };
@@ -190,18 +173,18 @@ END:VCARD`;
   };
 
   const AppHeader = () => (
-    <div className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/90 backdrop-blur-xl">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-          <User className="w-4 h-4 text-white" />
+    <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 bg-black/95 backdrop-blur-xl">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+          <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
         </div>
-        <h1 className="text-xl font-bold text-white">{screens[currentScreen]}</h1>
+        <h1 className="text-lg sm:text-xl font-bold text-white">{screens[currentScreen]}</h1>
       </div>
     </div>
   );
 
   const TabBar = () => (
-    <div className="sticky bottom-0 z-40 flex justify-around items-center py-4 border-t border-white/10 bg-black/90 backdrop-blur-xl">
+    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-around items-center py-2 sm:py-4 px-2 border-t border-white/10 bg-black/95 backdrop-blur-xl">
       {Object.entries(screens).map(([key, label]) => {
         const IconComponent = {
           profile: User,
@@ -215,12 +198,13 @@ END:VCARD`;
           <button
             key={key}
             onClick={() => handleScreenChange(key)}
-            className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${currentScreen === key
+            className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
+              currentScreen === key
                 ? 'text-blue-400 bg-blue-500/20 scale-105'
                 : 'text-white/60 hover:text-white/80 hover:bg-white/10'
-              }`}
+            }`}
           >
-            <IconComponent className="w-5 h-5" />
+            <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
             <span className="text-xs font-medium">{label}</span>
           </button>
         );
@@ -228,35 +212,15 @@ END:VCARD`;
     </div>
   );
 
-  const FloatingSaveButton = () => {
-    if (!showSaveFloat) return null;
-
-    return (
-      <button
-        onClick={handleSaveContact}
-        className={`fixed bottom-20 right-6 w-14 h-14 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center z-50 ${contactSaved
-            ? 'bg-green-500 hover:bg-green-600'
-            : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:shadow-xl hover:scale-110'
-          }`}
-      >
-        {contactSaved ? (
-          <Check className="w-6 h-6 text-white" />
-        ) : (
-          <Plus className="w-6 h-6 text-white" />
-        )}
-      </button>
-    );
-  };
-
   const QRCodeModal = () => {
     if (!showQRCode) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl p-6 mx-4">
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
           <div className="text-center">
             <h3 className="text-lg font-bold text-gray-900 mb-4">QR Code</h3>
-            <div className="w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+            <div className="w-48 h-48 bg-gray-100 rounded-xl flex items-center justify-center mb-4 mx-auto">
               <div className="text-center">
                 <QrCode className="w-16 h-16 text-gray-400 mx-auto mb-2" />
                 <p className="text-gray-600 text-sm">QR Code Generated</p>
@@ -276,52 +240,52 @@ END:VCARD`;
   };
 
   const ProfileScreen = () => (
-    <div className={`flex-1 px-6 py-6 space-y-6 transition-all duration-300 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'
-      }`}>
+    <div className="px-4 sm:px-6 py-6 space-y-6">
       <div className="text-center">
         <div className="relative inline-block mb-4">
           <img
             src={contactInfo.avatar}
             alt={contactInfo.name}
-            className="w-24 h-24 rounded-3xl object-cover border-4 border-white/20"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl object-cover border-4 border-white/20"
           />
-          <div className={`absolute bottom-1 right-1 w-6 h-6 rounded-full border-2 border-black ${isOnline ? 'bg-green-500' : 'bg-gray-500'
-            }`}></div>
-          <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
-            <Camera className="w-4 h-4 text-white" />
+          <div className={`absolute bottom-1 right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-black ${
+            isOnline ? 'bg-green-500' : 'bg-gray-500'
+          }`}></div>
+          <button className="absolute -bottom-2 -right-2 w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+            <Camera className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
           </button>
         </div>
 
-        <h2 className="text-2xl font-bold text-white mb-1">{contactInfo.name}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">{contactInfo.name}</h2>
         <p className="text-blue-400 font-medium mb-1">{contactInfo.username}</p>
         <p className="text-white/60 text-sm mb-4">{contactInfo.title}</p>
 
-        <div className="flex justify-center gap-8 mb-6">
+        <div className="flex justify-center gap-6 sm:gap-8 mb-6">
           <div className="text-center">
-            <p className="text-xl font-bold text-white">{contactInfo.projects}</p>
+            <p className="text-lg sm:text-xl font-bold text-white">{contactInfo.projects}</p>
             <p className="text-white/60 text-xs">Projects</p>
           </div>
           <div className="text-center">
-            <p className="text-xl font-bold text-white">{contactInfo.followers}</p>
+            <p className="text-lg sm:text-xl font-bold text-white">{contactInfo.followers}</p>
             <p className="text-white/60 text-xs">Followers</p>
           </div>
           <div className="text-center">
-            <p className="text-xl font-bold text-white">{contactInfo.following}</p>
+            <p className="text-lg sm:text-xl font-bold text-white">{contactInfo.following}</p>
             <p className="text-white/60 text-xs">Following</p>
           </div>
         </div>
 
-        <div className="flex gap-3 justify-center mb-4">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
           <button
             onClick={() => window.open(`mailto:${contactInfo.email}`, '_blank')}
-            className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all max-w-32"
+            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all"
           >
             <Mail className="w-4 h-4" />
             Message
           </button>
           <button
             onClick={handleWhatsAppClick}
-            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all max-w-32"
+            className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-6 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all"
           >
             <Phone className="w-4 h-4" />
             WhatsApp
@@ -333,7 +297,7 @@ END:VCARD`;
         <p className="text-white/80 text-sm leading-relaxed">{contactInfo.bio}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button
           onClick={handleShare}
           disabled={isSharing}
@@ -365,8 +329,7 @@ END:VCARD`;
   );
 
   const AboutScreen = () => (
-    <div className={`flex-1 px-6 py-6 space-y-6 transition-all duration-300 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'
-      }`}>
+    <div className="px-4 sm:px-6 py-6 space-y-6">
       <div className="text-center mb-6">
         <Award className="w-12 h-12 text-blue-400 mx-auto mb-3" />
         <h3 className="text-lg font-bold text-white mb-2">Skills & Expertise</h3>
@@ -379,7 +342,7 @@ END:VCARD`;
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-3">
                 <div className={`w-3 h-3 rounded-full ${skill.color}`}></div>
-                <span className="text-white font-medium">{skill.name}</span>
+                <span className="text-white font-medium text-sm sm:text-base">{skill.name}</span>
               </div>
               <div className="text-right">
                 <p className="text-white text-sm font-medium">{skill.level}%</p>
@@ -399,8 +362,7 @@ END:VCARD`;
   );
 
   const PortfolioScreen = () => (
-    <div className={`flex-1 px-6 py-6 space-y-6 transition-all duration-300 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'
-      }`}>
+    <div className="px-4 sm:px-6 py-6 space-y-6">
       <div className="text-center mb-6">
         <TrendingUp className="w-12 h-12 text-purple-400 mx-auto mb-3" />
         <h3 className="text-lg font-bold text-white mb-2">Recent Projects</h3>
@@ -416,19 +378,20 @@ END:VCARD`;
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 ${project.color} rounded-xl flex items-center justify-center`}>
-                  <TrendingUp className="w-6 h-6 text-white" />
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 ${project.color} rounded-xl flex items-center justify-center`}>
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="text-left">
-                  <h4 className="text-white font-medium">{project.name}</h4>
-                  <p className="text-white/60 text-sm">{project.tech}</p>
+                  <h4 className="text-white font-medium text-sm sm:text-base">{project.name}</h4>
+                  <p className="text-white/60 text-xs sm:text-sm">{project.tech}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${project.status === 'Live' ? 'bg-green-500/20 text-green-400' :
-                    project.status === 'Beta' ? 'bg-blue-500/20 text-blue-400' :
-                      'bg-yellow-500/20 text-yellow-400'
-                  }`}>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  project.status === 'Live' ? 'bg-green-500/20 text-green-400' :
+                  project.status === 'Beta' ? 'bg-blue-500/20 text-blue-400' :
+                  'bg-yellow-500/20 text-yellow-400'
+                }`}>
                   {project.status}
                 </span>
                 <ChevronRight className="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" />
@@ -441,7 +404,7 @@ END:VCARD`;
       <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl p-4 border border-blue-500/20">
         <div className="flex items-center gap-3 mb-2">
           <Star className="w-5 h-5 text-yellow-400" />
-          <span className="text-white font-medium">Featured Achievement</span>
+          <span className="text-white font-medium text-sm sm:text-base">Featured Achievement</span>
         </div>
         <p className="text-white/80 text-sm">Led a team of 5 developers to build a scalable e-commerce platform serving 10K+ users</p>
       </div>
@@ -449,8 +412,7 @@ END:VCARD`;
   );
 
   const ContactScreen = () => (
-    <div className={`flex-1 px-6 py-6 space-y-6 transition-all duration-300 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'
-      }`}>
+    <div className="px-4 sm:px-6 py-6 space-y-6">
       <div className="text-center mb-6">
         <MessageCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
         <h3 className="text-lg font-bold text-white mb-2">Get In Touch</h3>
@@ -461,14 +423,14 @@ END:VCARD`;
         <a href={`mailto:${contactInfo.email}`} className="block">
           <div className="bg-white/5 rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all group">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                <Mail className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <div className="flex-1">
-                <p className="text-white font-medium">Email</p>
-                <p className="text-white/60 text-sm">{contactInfo.email}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-medium text-sm sm:text-base">Email</p>
+                <p className="text-white/60 text-xs sm:text-sm truncate">{contactInfo.email}</p>
               </div>
-              <ExternalLink className="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" />
+              <ExternalLink className="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors flex-shrink-0" />
             </div>
           </div>
         </a>
@@ -476,12 +438,12 @@ END:VCARD`;
         <a href={`tel:${contactInfo.phone}`} className="block">
           <div className="bg-white/5 rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all group">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                <Phone className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div className="flex-1">
-                <p className="text-white font-medium">Phone</p>
-                <p className="text-white/60 text-sm">{contactInfo.phone}</p>
+                <p className="text-white font-medium text-sm sm:text-base">Phone</p>
+                <p className="text-white/60 text-xs sm:text-sm">{contactInfo.phone}</p>
               </div>
               <ExternalLink className="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" />
             </div>
@@ -493,12 +455,12 @@ END:VCARD`;
           className="w-full bg-white/5 rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all group"
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center">
-              <MessageCircle className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-white font-medium">WhatsApp</p>
-              <p className="text-white/60 text-sm">Send a quick message</p>
+              <p className="text-white font-medium text-sm sm:text-base">WhatsApp</p>
+              <p className="text-white/60 text-xs sm:text-sm">Send a quick message</p>
             </div>
             <ExternalLink className="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" />
           </div>
@@ -506,12 +468,12 @@ END:VCARD`;
 
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <MapPin className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center">
+              <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-white font-medium">Location</p>
-              <p className="text-white/60 text-sm">{contactInfo.location}</p>
+              <p className="text-white font-medium text-sm sm:text-base">Location</p>
+              <p className="text-white/60 text-xs sm:text-sm">{contactInfo.location}</p>
             </div>
           </div>
         </div>
@@ -528,8 +490,7 @@ END:VCARD`;
   );
 
   const SocialScreen = () => (
-    <div className={`flex-1 px-6 py-6 space-y-6 transition-all duration-300 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'
-      }`}>
+    <div className="px-4 sm:px-6 py-6 space-y-6">
       <div className="text-center mb-6">
         <Share2 className="w-12 h-12 text-pink-400 mx-auto mb-3" />
         <h3 className="text-lg font-bold text-white mb-2">Social Presence</h3>
@@ -545,12 +506,12 @@ END:VCARD`;
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 bg-gradient-to-r ${social.color} rounded-xl flex items-center justify-center`}>
-                  <social.icon className="w-6 h-6 text-white" />
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${social.color} rounded-xl flex items-center justify-center`}>
+                  <social.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div className="text-left">
-                  <p className="text-white font-medium">{social.platform}</p>
-                  <p className="text-white/60 text-sm">{social.username}</p>
+                <div className="text-left min-w-0 flex-1">
+                  <p className="text-white font-medium text-sm sm:text-base">{social.platform}</p>
+                  <p className="text-white/60 text-xs sm:text-sm truncate">{social.username}</p>
                 </div>
               </div>
               <div className="text-right">
@@ -573,7 +534,7 @@ END:VCARD`;
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <QrCode className="w-5 h-5 text-purple-400" />
-            <span className="text-white font-medium">QR Code</span>
+            <span className="text-white font-medium text-sm sm:text-base">QR Code</span>
           </div>
           <button
             onClick={generateQRCode}
@@ -599,16 +560,30 @@ END:VCARD`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="w-full h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden relative flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      <div className="w-full h-screen flex flex-col overflow-hidden">
         <AppHeader />
-        <div className="flex-1 overflow-y-auto">
-          {renderScreen()}
+        
+        {/* Main content area with proper spacing for fixed header and navbar */}
+        <div className="flex-1 overflow-y-auto pt-16 pb-20 scrollbar-hide">
+          <div className="transition-all duration-300 ease-in-out">
+            {renderScreen()}
+          </div>
         </div>
+        
         <TabBar />
-        <FloatingSaveButton />
         <QRCodeModal />
       </div>
+      
+      <style jsx>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }
