@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './App.css'; // Ensure you have a CSS file for global styles
 
 import {
   Mail, Phone, MapPin, Linkedin, Github, Twitter, Download, Share2,
